@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="mb-0">Applications queue</h1>
+      <p class="text-muted mb-0 small">
+        Tenders that clients have requested TenderRadar to apply for.
+      </p>
+    </div>
+    <form method="get" class="d-flex gap-2 align-items-end">
+      <div>
+        <label class="form-label mb-1">Status</label>
+        <select name="status" class="form-select">
+          <option value="submitted" {% if status_filter == "submitted" %}selected{% endif %}>Submitted (default)</option>
+          <option value="not_submitted" {% if status_filter == "not_submitted" %}selected{% endif %}>Not submitted</option>
+          <option value="in_review" {% if status_filter == "in_review" %}selected{% endif %}>In review</option>
+          <option value="rejected" {% if status_filter == "rejected" %}selected{% endif %}>Rejected</option>
+          <option value="awarded" {% if status_filter == "awarded" %}selected{% endif %}>Awarded</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-outline-primary">Filter</button>
+    </form>
+  </div>
+
+  {% if applications %}
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-3">Client</th>
+              <th>Tender</th>
+              <th>Type</th>
+              <th>Closing</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for app in applications %}
+              <tr>
+                <td class="ps-3">
+                  <div class="fw-semibold">{{ app.client.company_name }}</div>
+                  <div class="text-muted small">{{ app.client.email }}</div>
+                </td>
+                <td>
+                  <div class="fw-semibold">{{ app.tender.title }}</div>
+                  <div class="text-muted small">
+                    <a href="{{ app.tender.url }}" target="_blank">Open tender link</a>
+                  </div>
+                </td>
+                <td><span class="badge text-bg-light text-dark border">{{ app.tender.get_tender_type_display }}</span></td>
+                <td>{{ app.tender.closing_date|default:"-" }}</td>
+                <td>
+                  {% if app.status == "submitted" %}
+                    <span class="badge text-bg-success">Submitted</span>
+                  {% elif app.status == "not_submitted" %}
+                    <span class="badge text-bg-warning">Not submitted</span>
+                  {% elif app.status == "in_review" %}
+                    <span class="badge text-bg-info">In review</span>
+                  {% elif app.status == "awarded" %}
+                    <span class="badge text-bg-primary">Awarded</span>
+                  {% elif app.status == "rejected" %}
+                    <span class="badge text-bg-danger">Rejected</span>
+                  {% else %}
+                    <span class="badge text-bg-secondary">{{ app.status }}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      No applications found with the current filter.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

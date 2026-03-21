@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col-12 col-md-8">
+      <h1 class="mb-2">My Tender Profile</h1>
+      <p class="text-muted mb-0">
+        A smart profile that automatically matches you with relevant tenders across
+        government and private sectors.
+      </p>
+    </div>
+  </div>
+
+  {% if db_error %}
+    <div class="alert alert-warning">
+      We’re still finishing the database setup for preferences. You can browse
+      tenders on the dashboard, and this page will be fully active once setup is done.
+    </div>
+  {% else %}
+    <form method="post" class="row g-4">
+      {% csrf_token %}
+
+      <div class="col-md-5">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h4 class="card-title mb-3">Business profile</h4>
+            <p class="text-muted small">
+              Basic details about your company so we understand who you are.
+            </p>
+            {% if profile_form %}
+              <div class="mb-3">
+                {{ profile_form.company_name.label_tag }}
+                {{ profile_form.company_name }}
+              </div>
+              <div class="mb-3">
+                {{ profile_form.industry.label_tag }}
+                {{ profile_form.industry }}
+              </div>
+              <div class="mb-3">
+                {{ profile_form.province.label_tag }}
+                {{ profile_form.province }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-7">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h4 class="card-title mb-3">Smart matching & alerts</h4>
+            <p class="text-muted small mb-3">
+              Choose the services you provide, where you operate, and which
+              departments you want to work with. You can also add <strong>custom
+              services</strong> that are not on the list.
+            </p>
+            {% if prefs_form %}
+              <div class="mb-3">
+                <label class="form-label">{{ prefs_form.services.label }}</label>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{ prefs_form.services }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                {{ prefs_form.other_services.label_tag }}
+                {{ prefs_form.other_services }}
+                {% if prefs_form.other_services.help_text %}
+                  <div class="form-text">
+                    {{ prefs_form.other_services.help_text }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">{{ prefs_form.target_provinces.label }}</label>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{ prefs_form.target_provinces }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">{{ prefs_form.target_departments.label }}</label>
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{ prefs_form.target_departments }}
+                  </div>
+                </div>
+              </div>
+
+              <hr class="my-3">
+
+              <div class="mb-2">
+                <label class="form-label d-block">How should we contact you?</label>
+                <div class="form-check form-check-inline">
+                  {{ prefs_form.delivery_email }}
+                  <label class="form-check-label" for="{{ prefs_form.delivery_email.id_for_label }}">
+                    Email
+                  </label>
+                </div>
+                <div class="form-check form-check-inline">
+                  {{ prefs_form.delivery_telegram }}
+                  <label class="form-check-label" for="{{ prefs_form.delivery_telegram.id_for_label }}">
+                    Telegram (coming soon)
+                  </label>
+                </div>
+                <div class="form-check form-check-inline">
+                  {{ prefs_form.delivery_whatsapp }}
+                  <label class="form-check-label" for="{{ prefs_form.delivery_whatsapp.id_for_label }}">
+                    WhatsApp (coming soon)
+                  </label>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <label class="form-label">{{ prefs_form.frequency.label }}</label>
+                {{ prefs_form.frequency }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary px-4">
+          Save my matching profile
+        </button>
+      </div>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}
+

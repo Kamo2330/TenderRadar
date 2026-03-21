@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h1 class="mb-1">{{ client.company_name }}</h1>
+      <p class="text-muted mb-0">
+        Matched tenders since {{ since }} (last {{ days }} days).
+      </p>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary" href="{% url 'tenders:staff_managed_overview' %}?days={{ days }}">Back</a>
+    </div>
+  </div>
+
+  {% if items %}
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-3">Tender</th>
+              <th>Type</th>
+              <th>Department</th>
+              <th>Province</th>
+              <th>Closing</th>
+              <th>Status</th>
+              <th class="text-end pe-3">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+              <tr>
+                <td class="ps-3">
+                  <div class="fw-semibold">{{ item.tender.title }}</div>
+                  <div class="text-muted small">
+                    <a href="{{ item.tender.url }}" target="_blank">Open source link</a>
+                  </div>
+                </td>
+                <td><span class="badge text-bg-light text-dark border">{{ item.tender.get_tender_type_display }}</span></td>
+                <td>{{ item.tender.department|default:"-" }}</td>
+                <td>{{ item.tender.province|default:"-" }}</td>
+                <td>{{ item.tender.closing_date|default:"-" }}</td>
+                <td>
+                  {% if item.status == "submitted" %}
+                    <span class="badge text-bg-success">Submitted</span>
+                  {% elif item.status == "in_review" %}
+                    <span class="badge text-bg-info">In review</span>
+                  {% elif item.status == "awarded" %}
+                    <span class="badge text-bg-primary">Awarded</span>
+                  {% elif item.status == "rejected" %}
+                    <span class="badge text-bg-danger">Rejected</span>
+                  {% else %}
+                    <span class="badge text-bg-warning">Not submitted</span>
+                  {% endif %}
+                </td>
+                <td class="text-end pe-3">
+                  {% if item.status == "not_submitted" %}
+                    <form method="post" class="d-inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="tender_id" value="{{ item.tender.id }}">
+                      <input type="hidden" name="action" value="mark_submitted">
+                      <button class="btn btn-sm btn-primary" type="submit">Mark submitted</button>
+                    </form>
+                  {% else %}
+                    <span class="text-muted small">—</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      No matched tenders found in this window for this client.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

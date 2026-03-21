@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-2">My tenders</h1>
+  <p class="text-muted mb-3">
+    Showing tenders that match your services and location. Click “Apply” on jobs you
+    want TenderRadar to submit for you.
+  </p>
+
+  {% if items %}
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-3">Tender</th>
+              <th>Type</th>
+              <th>Department</th>
+              <th>Province</th>
+              <th>Closing</th>
+              <th class="text-end pe-3">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+              <tr>
+                <td class="ps-3">
+                  <div class="fw-semibold">{{ item.tender.title }}</div>
+                  <div class="text-muted small">
+                    <a href="{{ item.tender.url }}" target="_blank">Open tender link</a>
+                  </div>
+                </td>
+                <td><span class="badge text-bg-light text-dark border">{{ item.tender.get_tender_type_display }}</span></td>
+                <td>{{ item.tender.department|default:"-" }}</td>
+                <td>{{ item.tender.province|default:"-" }}</td>
+                <td>{{ item.tender.closing_date|default:"-" }}</td>
+                <td class="text-end pe-3">
+                  {% if item.status == "submitted" %}
+                    <span class="badge text-bg-success">Applied</span>
+                  {% else %}
+                    <form method="post" action="{% url 'tenders:client_apply' item.tender.id %}" class="d-inline">
+                      {% csrf_token %}
+                      <button class="btn btn-sm btn-primary" type="submit">Apply</button>
+                    </form>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      No matching tenders found for your profile yet. As new tenders are published, they
+      will appear here if they match your services and location.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

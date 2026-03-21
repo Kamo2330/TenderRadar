@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h1 class="mb-1">Managed Clients</h1>
+      <p class="text-muted mb-0">
+        Coverage dashboard for clients where TenderRadar applies on their behalf.
+      </p>
+    </div>
+    <form method="get" class="d-flex gap-2 align-items-end">
+      <div>
+        <label class="form-label mb-1">Window</label>
+        <select name="days" class="form-select">
+          <option value="7" {% if window_days == 7 %}selected{% endif %}>Last 7 days</option>
+          <option value="30" {% if window_days == 30 %}selected{% endif %}>Last 30 days</option>
+          <option value="90" {% if window_days == 90 %}selected{% endif %}>Last 90 days</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-outline-primary">Apply</button>
+    </form>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <div class="text-muted small">Managed clients</div>
+          <div class="fs-3 fw-semibold">{{ total_clients }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <div class="text-muted small">Up to date</div>
+          <div class="fs-3 fw-semibold">{{ up_to_date }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <div class="text-muted small">Need action</div>
+          <div class="fs-3 fw-semibold">{{ pending_clients }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if rows %}
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-3">Client</th>
+              <th>Matched tenders</th>
+              <th>Applied</th>
+              <th>Pending</th>
+              <th class="text-end pe-3">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in rows %}
+              <tr>
+                <td class="ps-3">
+                  <div class="fw-semibold">{{ row.client.company_name }}</div>
+                  <div class="text-muted small">{{ row.client.email }}</div>
+                </td>
+                <td>{{ row.matched }}</td>
+                <td>{{ row.submitted }}</td>
+                <td>
+                  {% if row.pending == 0 and row.matched > 0 %}
+                    <span class="badge text-bg-success">Up to date</span>
+                  {% elif row.matched == 0 %}
+                    <span class="badge text-bg-secondary">No matches</span>
+                  {% else %}
+                    <span class="badge text-bg-warning">{{ row.pending }} pending</span>
+                  {% endif %}
+                </td>
+                <td class="text-end pe-3">
+                  <a
+                    class="btn btn-sm btn-outline-primary"
+                    href="{% url 'tenders:staff_client_coverage_detail' row.client.id %}?days={{ window_days }}"
+                  >
+                    View tenders
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      No managed clients found yet. When capturing a client, enable “is managed” to include them here.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

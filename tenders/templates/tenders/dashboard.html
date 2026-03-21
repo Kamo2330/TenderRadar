@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-3">Tender Dashboard</h1>
+  <p class="mb-3">
+    Below are recent tenders and RFQs. Configure your alerts on the
+    <a href="{% url 'tenders:preferences' %}">preferences page</a>.
+  </p>
+
+  {% if tenders %}
+  <div class="list-group">
+    {% for tender in tenders %}
+    <a href="{{ tender.url }}" target="_blank" class="list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">{{ tender.title }}</h5>
+        <small>Closing: {{ tender.closing_date|default:"N/A" }}</small>
+      </div>
+      <p class="mb-1">
+        <span class="badge text-bg-secondary me-1">{{ tender.get_tender_type_display }}</span>
+        Department: {{ tender.department|default:"N/A" }} |
+        Province: {{ tender.province|default:"N/A" }} |
+        Source: {{ tender.source.name }}
+      </p>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No tenders found yet.</p>
+  {% endif %}
+</div>
+{% endblock %}
+

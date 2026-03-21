@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 720px;">
+  <h1 class="mb-3">Capture new client</h1>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <h4>Client details</h4>
+    {{ client_form.as_p }}
+
+    <h4 class="mt-4">Tender subscription</h4>
+    <p class="text-muted">
+      Set what this client should receive alerts for (services, departments, provinces, categories).
+    </p>
+    {{ sub_form.as_p }}
+
+    <button type="submit" class="btn btn-primary mt-3">Save client</button>
+  </form>
+</div>
+{% endblock %}
+
