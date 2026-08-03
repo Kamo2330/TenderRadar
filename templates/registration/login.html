@@ -2,7 +2,8 @@
 
 {% block content %}
 <div class="container mt-5" style="max-width: 480px;">
-  <h1 class="mb-4">Login</h1>
+  <h1 class="mb-2">Sign in</h1>
+  <p class="text-muted mb-4">Welcome back to TenderRadar.</p>
 
   {% if form.errors %}
     <div class="alert alert-danger">
@@ -19,11 +20,9 @@
     <button type="submit" class="btn btn-primary w-100 mt-2">Sign in</button>
   </form>
 
-  <p class="mt-3 text-center text-muted">
-    Don't have an account?
-    <a href="{% url 'signup' %}">Create one</a>
-  </p>
+  <hr class="my-4">
 
+  <p class="text-center mb-2">New here?</p>
+  <a href="{% url 'signup' %}" class="btn btn-outline-primary w-100">Create account</a>
 </div>
 {% endblock %}
-
