@@ -87,6 +87,10 @@ class Tender(models.Model):
         unique_together = ("source", "external_id")
         ordering = ["-created_at"]
 
+    @property
+    def download_url(self) -> str:
+        return self.url or ""
+
     def __str__(self) -> str:
         return self.title
 

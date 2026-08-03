@@ -1,83 +1,116 @@
 # TenderRadar
 
-TenderRadar is a Django-based platform that helps businesses discover new tenders and RFQs quickly and receive alerts based on their interests.
+South African tender discovery platform — Django REST API + Next.js frontend.
 
-## What it does
+---
 
-- **Ingests tenders from real sources**: National Treasury **OCDS API** (`ocds-api.etenders.gov.za`) and **Tenders-SA** JSON API (aggregator RFQs, including many corporate/SOE notices).
-- **Normalizes data** into a `Tender` model.
-- **Lets users sign up and log in**.
-- **Provides a dashboard** of recent tenders.
-- **Allows businesses to define alert preferences** (keywords, departments, provinces, channels).
-- **Sends alerts by email** (console backend in development).
+## Windows setup (copy-paste into Command Prompt)
 
-## Tech stack
+**Important:** The project folder is on your **Desktop**, not in `C:\Users\Admin`.
 
-- Python 3.13+
-- Django 6
-- SQLite (development)
+Open **Command Prompt** and run these commands **one at a time** (do not copy lines starting with `REM`):
 
-## Getting started (development)
+```cmd
+cd C:\Users\Admin\Desktop\TenderRadar
+```
 
-From the project root (`TenderRadar/` where `manage.py` lives):
+If that fails, find where you cloned/downloaded the repo. Common paths:
 
-```bash
+```cmd
+cd C:\Users\Admin\Desktop\TenderRadar
+cd C:\Users\Admin\Documents\GitHub\TenderRadar
+dir C:\Users\Admin\Desktop
+```
+
+### Backend (Django)
+
+```cmd
+cd C:\Users\Admin\Desktop\TenderRadar
 python -m venv .venv
-.venv\Scripts\activate      # On Windows PowerShell: .venv\Scripts\Activate.ps1
-
-pip install "django>=6,<7"
-
-python manage.py migrate --run-syncdb
+.venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env
+python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Then open `http://127.0.0.1:8000/`:
+Leave that terminal open. API runs at http://127.0.0.1:8000/
 
-- `Log in` (accounts are created by staff; there is no public self‑signup).
-- Use the **dashboard** as the main entry point.
+### Frontend (Next.js) — open a **second** Command Prompt
 
-## Testing the tender flow
+```cmd
+cd C:\Users\Admin\Desktop\TenderRadar\frontend
+copy .env.local.example .env.local
+npm install
+npm run dev
+```
 
-1. Log in at `http://127.0.0.1:8000/accounts/login/`.
-2. In another terminal, run (defaults: last **14 days** of OCDS + Tenders‑SA pages):
+Open http://localhost:3000 and sign in with your superuser account.
 
-   ```bash
-   python manage.py scrape_tenders
-   ```
+### Load tender data (third terminal, optional)
 
-   Options:
+```cmd
+cd C:\Users\Admin\Desktop\TenderRadar
+.venv\Scripts\activate
+python manage.py scrape_tenders
+```
 
-   ```bash
-   python manage.py scrape_tenders --source etenders --days 7
-   python manage.py scrape_tenders --source tenders_sa --tsa-max-pages 5
-   ```
+---
 
-3. New rows trigger **email alerts** (console backend in dev — printed in the terminal).
+## If you don't have the latest code yet
 
-## Key apps and files
+Pull from GitHub first:
 
-- `tenders/`
-  - `models.py` – `Source`, `Tender`, `BusinessProfile`, `AlertPreference`, `AlertEvent`.
-  - `views.py` – signup, dashboard, preferences, logout.
-  - `services.py` – matching logic and email alert sending.
-  - `templates/tenders/` – `dashboard.html`, `preferences.html`.
-- `scraper/`
-  - `base.py` – base scraper class.
-  - `etenders.py` – demo scraper implementation.
-  - `management/commands/scrape_tenders.py` – `python manage.py scrape_tenders`.
-- `templates/`
-  - `base.html` – Bootstrap layout and navbar.
-  - `registration/login.html`, `registration/signup.html`, `registration/logged_out.html`.
+```cmd
+cd C:\Users\Admin\Desktop\TenderRadar
+git pull origin cursor/portfolio-setup-7dd3
+```
 
-## Next steps / roadmap
+Or clone fresh:
 
-- Add real scrapers for:
-  - National eTenders portal.
-  - Gauteng municipalities.
-  - Departments: Social Development, Health, etc.
-  - Private sector portals and mines.
-- Integrate **Telegram** and **WhatsApp** alerts.
-- Add **Celery + Redis** for scheduled scraping and background alert delivery.
-- Harden auth and password policies for production.
+```cmd
+cd C:\Users\Admin\Desktop
+git clone https://github.com/Kamo2330/TenderRadar.git
+cd TenderRadar
+git checkout cursor/portfolio-setup-7dd3
+```
 
+---
+
+## Tech stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | Next.js 15, React, Tailwind CSS |
+| Backend | Django 6, Django REST Framework |
+| Database | SQLite (local), PostgreSQL (production) |
+
+---
+
+## Environment variables
+
+Copy `.env.example` to `.env` (backend) and `frontend\.env.local.example` to `frontend\.env.local`.
+
+| Variable | Description |
+|----------|-------------|
+| `DJANGO_SECRET_KEY` | Django secret (change in production) |
+| `DEBUG` | `True` for local dev |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:3000` |
+| `NEXT_PUBLIC_API_URL` | `http://127.0.0.1:8000/api` |
+
+---
+
+## Run tests
+
+```cmd
+cd C:\Users\Admin\Desktop\TenderRadar
+.venv\Scripts\activate
+python manage.py test
+```
+
+---
+
+## License
+
+[MIT](LICENSE)
