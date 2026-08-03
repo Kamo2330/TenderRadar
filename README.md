@@ -35,6 +35,25 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+**No venv needed** if packages are already installed globally (your `pip install` already worked).
+
+### Fix: `table "tenders_source" already exists`
+
+Your database was created before migrations were tracked. Run:
+
+```cmd
+cd C:\Users\Admin\Desktop\TenderRadar
+python manage.py migrate --fake-initial
+```
+
+If that still fails, start with a clean database (deletes existing data):
+
+```cmd
+del db.sqlite3
+python manage.py migrate
+python manage.py createsuperuser
+```
+
 Leave that terminal open. API runs at http://127.0.0.1:8000/
 
 ### Frontend (Next.js) — open a **second** Command Prompt
