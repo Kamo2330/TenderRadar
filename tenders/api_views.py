@@ -8,6 +8,7 @@ from .models import AlertPreference, Tender
 from .serializers import (
     AlertPreferenceSerializer,
     LoginSerializer,
+    RegisterSerializer,
     TenderSerializer,
     UserSerializer,
 )
@@ -63,6 +64,23 @@ class TenderMetaAPIView(APIView):
                     .order_by("source__name")
                 ],
             }
+        )
+
+
+class RegisterAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response(
+            {
+                "token": token.key,
+                "user": UserSerializer(user).data,
+            },
+            status=status.HTTP_201_CREATED,
         )
 
 

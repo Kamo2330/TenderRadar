@@ -11,6 +11,7 @@ from .forms import (
     ClientForm,
     ClientSubscriptionForm,
     PROVINCE_CHOICES,
+    SignUpForm,
 )
 from django.db.models import Count, Q
 from django.utils import timezone as dj_timezone
@@ -39,6 +40,31 @@ def logout_view(request):
 def staff_required(view_func):
     decorated = login_required(user_passes_test(lambda u: u.is_staff)(view_func))
     return decorated
+
+
+def signup_view(request):
+    if request.user.is_authenticated:
+        return redirect("tenders:dashboard")
+
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(
+                username=form.cleaned_data["username"],
+                email=form.cleaned_data["email"],
+                password=form.cleaned_data["password1"],
+            )
+            BusinessProfile.objects.create(
+                user=user,
+                company_name=form.cleaned_data["company_name"],
+            )
+            AlertPreference.objects.create(user=user)
+            login(request, user)
+            return redirect("tenders:dashboard")
+    else:
+        form = SignUpForm()
+
+    return render(request, "registration/signup.html", {"form": form})
 
 
 @login_required

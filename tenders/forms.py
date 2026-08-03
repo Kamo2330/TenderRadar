@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 
 from .models import (
     AlertPreference,
@@ -6,6 +8,8 @@ from .models import (
     Client,
     ClientSubscription,
 )
+
+User = get_user_model()
 
 
 SERVICE_CHOICES = [
@@ -43,6 +47,51 @@ DEPARTMENT_CHOICES = [
     ("municipal", "Municipalities"),
     ("state_owned", "State‑owned entities"),
 ]
+
+
+class SignUpForm(forms.Form):
+    username = forms.CharField(
+        max_length=150,
+        label="Username",
+        widget=forms.TextInput(attrs={"class": "form-control", "autocomplete": "username"}),
+    )
+    email = forms.EmailField(
+        label="Email",
+        widget=forms.EmailInput(attrs={"class": "form-control", "autocomplete": "email"}),
+    )
+    company_name = forms.CharField(
+        max_length=255,
+        label="Company name",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+    )
+    password1 = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={"class": "form-control", "autocomplete": "new-password"}),
+    )
+    password2 = forms.CharField(
+        label="Confirm password",
+        widget=forms.PasswordInput(attrs={"class": "form-control", "autocomplete": "new-password"}),
+    )
+
+    def clean_username(self):
+        username = self.cleaned_data["username"]
+        if User.objects.filter(username__iexact=username).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username
+
+    def clean_password1(self):
+        password = self.cleaned_data.get("password1")
+        if password:
+            validate_password(password)
+        return password
+
+    def clean(self):
+        cleaned = super().clean()
+        p1 = cleaned.get("password1")
+        p2 = cleaned.get("password2")
+        if p1 and p2 and p1 != p2:
+            raise forms.ValidationError("Passwords do not match.")
+        return cleaned
 
 
 class BusinessProfileForm(forms.ModelForm):

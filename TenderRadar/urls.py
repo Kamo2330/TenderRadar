@@ -22,6 +22,7 @@ from tenders import views as tender_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('tenders.api_urls')),
+    path('accounts/signup/', tender_views.signup_view, name='signup'),
     path('accounts/logout/', tender_views.logout_view, name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('tenders.urls')),

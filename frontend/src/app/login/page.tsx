@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { login } from "@/lib/api";
@@ -45,6 +46,12 @@ export default function LoginPage() {
         <button type="submit" className="mt-4 w-full rounded-lg bg-[var(--accent)] py-2 font-medium text-slate-900">
           Sign in
         </button>
+        <p className="mt-4 text-center text-sm text-[var(--muted)]">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="text-[var(--accent)] hover:underline">
+            Create one
+          </Link>
+        </p>
       </form>
     </main>
   );

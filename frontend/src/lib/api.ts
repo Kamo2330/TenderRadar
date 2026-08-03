@@ -39,6 +39,30 @@ export async function login(username: string, password: string) {
   return res.json() as Promise<{ token: string; user: User }>;
 }
 
+export type RegisterPayload = {
+  username: string;
+  email: string;
+  password: string;
+  company_name: string;
+};
+
+export async function register(payload: RegisterPayload) {
+  const res = await fetch(`${API_URL}/auth/register/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    const message =
+      typeof data.detail === "string"
+        ? data.detail
+        : Object.values(data).flat().join(" ") || "Could not create account.";
+    throw new Error(message);
+  }
+  return res.json() as Promise<{ token: string; user: User }>;
+}
+
 export async function fetchTenders(token: string, params: Record<string, string> = {}) {
   const query = new URLSearchParams(params).toString();
   const res = await fetch(`${API_URL}/tenders/?${query}`, {
