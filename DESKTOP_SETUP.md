@@ -13,7 +13,7 @@ git fetch origin
 git reset --hard origin/main
 ```
 
-This wipes merge conflicts and matches your Desktop folder to the working version on GitHub (includes signup). Your old `db.sqlite3` may be removed — run setup again to recreate it.
+This wipes merge conflicts and matches your Desktop folder to the working version on GitHub.
 
 **After this, you can ignore Git** and just edit files on Desktop.
 

@@ -22,8 +22,7 @@ if errorlevel 1 (
 echo.
 echo === Done ===
 echo Start backend:  python manage.py runserver
-echo Signup page:    http://127.0.0.1:8000/accounts/signup/
-echo Login page:     http://127.0.0.1:8000/accounts/login/
+echo Open site:      http://127.0.0.1:8000/
 echo.
 pause
 goto end
