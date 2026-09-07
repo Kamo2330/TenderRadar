@@ -8,6 +8,8 @@ from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
+from .drf_compat import rest_framework_available
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -62,12 +64,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
-    "rest_framework.authtoken",
     "corsheaders",
     "tenders",
     "scraper",
 ]
+
+if rest_framework_available():
+    INSTALLED_APPS[6:6] = [
+        "rest_framework",
+        "rest_framework.authtoken",
+    ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -136,17 +142,18 @@ EMAIL_BACKEND = os.environ.get(
 LOGIN_URL = "/admin/login/"
 LOGIN_REDIRECT_URL = "/"
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-    ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 50,
-}
+if rest_framework_available():
+    REST_FRAMEWORK = {
+        "DEFAULT_AUTHENTICATION_CLASSES": [
+            "rest_framework.authentication.TokenAuthentication",
+            "rest_framework.authentication.SessionAuthentication",
+        ],
+        "DEFAULT_PERMISSION_CLASSES": [
+            "rest_framework.permissions.IsAuthenticated",
+        ],
+        "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+        "PAGE_SIZE": 50,
+    }
 
 _cors_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000")
 CORS_ALLOWED_ORIGINS = [
