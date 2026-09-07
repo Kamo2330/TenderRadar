@@ -18,7 +18,15 @@ Open http://127.0.0.1:8000/
 
 No login required for the public tender register. Admin: http://127.0.0.1:8000/admin/
 
-## Load tender data
+## Load sample tenders (for testing)
+
+```cmd
+python manage.py load_sample_tenders
+```
+
+Adds 12 example tenders from eTenders and Tenders-SA sources. Safe to run more than once.
+
+## Load live tender data
 
 ```cmd
 python manage.py scrape_tenders
