@@ -12,42 +12,36 @@
   /* Mobile menu */
   var menuBtn = $("#menu-btn");
   var mainNav = $("#main-nav");
-
   if (menuBtn && mainNav) {
     menuBtn.addEventListener("click", function () {
       var open = mainNav.classList.toggle("is-open");
       menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-      menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     });
   }
 
-  /* Advanced filters toggle */
+  /* Advanced filters */
   var advToggle = $("#advanced-toggle");
   var advPanel = $("#search-advanced");
   var filterForm = $("#filter-form");
 
-  function openAdvanced() {
+  function setAdvanced(open) {
     if (!advPanel || !advToggle) return;
-    advPanel.classList.add("is-open");
-    advToggle.setAttribute("aria-expanded", "true");
-    advToggle.textContent = "Hide filters";
+    advPanel.classList.toggle("is-open", open);
+    advToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    advToggle.textContent = open ? "Hide filters" : "Advanced filters";
   }
 
   if (advToggle && advPanel) {
     var hasAdvanced =
-      $("#province", filterForm)?.value ||
-      $("#tender_type", filterForm)?.value ||
-      $("#source", filterForm)?.value ||
-      ($("#sort", filterForm)?.value && $("#sort", filterForm).value !== "newest");
+      ($("#province", filterForm) && $("#province", filterForm).value) ||
+      ($("#tender_type", filterForm) && $("#tender_type", filterForm).value) ||
+      ($("#source", filterForm) && $("#source", filterForm).value) ||
+      ($("#sort", filterForm) && $("#sort", filterForm).value !== "newest");
 
-    if (hasAdvanced) {
-      openAdvanced();
-    }
+    if (hasAdvanced) setAdvanced(true);
 
     advToggle.addEventListener("click", function () {
-      var isOpen = advPanel.classList.toggle("is-open");
-      advToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      advToggle.textContent = isOpen ? "Hide filters" : "Advanced filters";
+      setAdvanced(!advPanel.classList.contains("is-open"));
     });
   }
 
@@ -63,20 +57,18 @@
   /* Filter tags */
   var tagsEl = $("#filter-tags");
   if (filterForm && tagsEl) {
-    var tagFields = [
+    [
       { name: "q", label: "Search" },
       { name: "province", label: "Province" },
       { name: "tender_type", label: "Type" },
       { name: "source", label: "Source" },
-    ];
-
-    tagFields.forEach(function (cfg) {
+    ].forEach(function (cfg) {
       var field = $('[name="' + cfg.name + '"]', filterForm);
       if (!field || !field.value) return;
 
       var text = field.value;
-      if (field.tagName === "SELECT") {
-        text = field.options[field.selectedIndex]?.text || text;
+      if (field.tagName === "SELECT" && field.selectedIndex >= 0) {
+        text = field.options[field.selectedIndex].text;
       }
 
       tagsEl.hidden = false;
@@ -98,38 +90,39 @@
     el.classList.add(days <= 7 && days >= 0 ? "is-urgent" : "is-ok");
   });
 
-  /* Clickable table rows */
-  $$(".data-row[data-href]").forEach(function (row) {
-    row.addEventListener("click", function (e) {
+  /* Clickable cards */
+  $$(".tender-card[data-href]").forEach(function (card) {
+    card.addEventListener("click", function (e) {
       if (e.target.closest("a")) return;
-      var href = row.getAttribute("data-href");
+      var href = card.getAttribute("data-href");
       if (href) window.open(href, "_blank", "noopener");
     });
 
-    row.addEventListener("keydown", function (e) {
+    card.addEventListener("keydown", function (e) {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        var href = row.getAttribute("data-href");
+        var href = card.getAttribute("data-href");
         if (href) window.open(href, "_blank", "noopener");
       }
     });
   });
 
-  /* Highlight search terms in titles */
-  var query = $("#q")?.value?.trim();
-  if (query && query.length >= 2) {
+  /* Highlight search */
+  var qField = $("#q");
+  var query = qField ? qField.value.trim() : "";
+  if (query.length >= 2) {
     var terms = query.split(/\s+/).filter(Boolean);
     var pattern = new RegExp("(" + terms.map(function (t) {
       return t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }).join("|") + ")", "gi");
 
-    $$(".row-title").forEach(function (el) {
-      var html = el.textContent.replace(pattern, "<mark class=\"highlight\">$1</mark>");
+    $$(".tender-title").forEach(function (el) {
+      var html = el.textContent.replace(pattern, '<mark class="highlight">$1</mark>');
       if (html !== el.textContent) el.innerHTML = html;
     });
   }
 
-  /* Scroll to results on search */
+  /* Scroll to results */
   if (window.location.search && $("#tender-results")) {
     requestAnimationFrame(function () {
       $("#tender-results").scrollIntoView({ behavior: "smooth", block: "start" });

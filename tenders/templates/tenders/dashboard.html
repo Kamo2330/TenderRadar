@@ -11,11 +11,11 @@
     </div>
     {% if total_count is not None %}
     <ul class="hero-metrics">
-      <li>
+      <li class="metric-pill">
         <span class="metric-value">{{ total_count|default:"0" }}</span>
-        <span class="metric-label">Open</span>
+        <span class="metric-label">Open tenders</span>
       </li>
-      <li>
+      <li class="metric-pill">
         <span class="metric-value">{{ source_count|default:"0" }}</span>
         <span class="metric-label">Sources</span>
       </li>
@@ -26,75 +26,77 @@
 {% endblock %}
 
 {% block content %}
-<section class="search-section" aria-labelledby="search-title">
+<section class="search-section">
   <div class="container">
-    <div class="search-head">
-      <h2 id="search-title">Search the register</h2>
-      <button type="button" class="search-advanced-toggle" id="advanced-toggle" aria-expanded="false" aria-controls="filter-form">
-        Advanced filters
-      </button>
+    <div class="search-card">
+      <div class="search-card-head">
+        <h2 id="search-title">Search the register</h2>
+        <button type="button" class="pill-btn" id="advanced-toggle" aria-expanded="false" aria-controls="search-advanced">
+          Advanced filters
+        </button>
+      </div>
+
+      <form method="get" id="filter-form" class="search-form" role="search">
+        <div class="search-bar">
+          <label class="visually-hidden" for="q">Search keywords</label>
+          <input type="search" id="q" name="q" value="{{ q }}" placeholder="Search title, department, category or reference…" autocomplete="off">
+          <button type="submit" class="btn btn-search">Search</button>
+        </div>
+
+        <div class="search-advanced" id="search-advanced">
+          <div class="field">
+            <label for="province">Province</label>
+            <select id="province" name="province">
+              <option value="">All provinces</option>
+              {% for p in province_options %}
+              <option value="{{ p }}" {% if province == p %}selected{% endif %}>{{ p }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label for="tender_type">Type</label>
+            <select id="tender_type" name="tender_type">
+              <option value="">All types</option>
+              {% for value, label in tender_type_options %}
+              <option value="{{ value }}" {% if tender_type == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label for="source">Source</label>
+            <select id="source" name="source">
+              <option value="">All sources</option>
+              {% for slug, name in source_options %}
+              <option value="{{ slug }}" {% if source == slug %}selected{% endif %}>{{ name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label for="sort">Sort by</label>
+            <select id="sort" name="sort">
+              <option value="newest" {% if sort == "newest" %}selected{% endif %}>Newest published</option>
+              <option value="closing_soon" {% if sort == "closing_soon" %}selected{% endif %}>Closing soonest</option>
+              <option value="closing_latest" {% if sort == "closing_latest" %}selected{% endif %}>Closing latest</option>
+            </select>
+          </div>
+        </div>
+
+        {% if q or province or tender_type or source %}
+        <div class="search-actions">
+          <a href="{% url 'tenders:dashboard' %}" class="btn btn-ghost">Clear filters</a>
+        </div>
+        {% endif %}
+      </form>
+
+      <div class="filter-tags" id="filter-tags" hidden></div>
     </div>
-
-    <form method="get" id="filter-form" class="search-form" role="search">
-      <div class="search-primary">
-        <label class="visually-hidden" for="q">Search keywords</label>
-        <input type="search" id="q" name="q" value="{{ q }}" placeholder="Search by title, department, category or reference…" autocomplete="off">
-        <button type="submit" class="btn btn-search">Search</button>
-      </div>
-
-      <div class="search-advanced" id="search-advanced">
-        <div class="field">
-          <label for="province">Province</label>
-          <select id="province" name="province">
-            <option value="">All provinces</option>
-            {% for p in province_options %}
-            <option value="{{ p }}" {% if province == p %}selected{% endif %}>{{ p }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="field">
-          <label for="tender_type">Type</label>
-          <select id="tender_type" name="tender_type">
-            <option value="">All types</option>
-            {% for value, label in tender_type_options %}
-            <option value="{{ value }}" {% if tender_type == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="field">
-          <label for="source">Source</label>
-          <select id="source" name="source">
-            <option value="">All sources</option>
-            {% for slug, name in source_options %}
-            <option value="{{ slug }}" {% if source == slug %}selected{% endif %}>{{ name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="field">
-          <label for="sort">Sort by</label>
-          <select id="sort" name="sort">
-            <option value="newest" {% if sort == "newest" %}selected{% endif %}>Newest published</option>
-            <option value="closing_soon" {% if sort == "closing_soon" %}selected{% endif %}>Closing soonest</option>
-            <option value="closing_latest" {% if sort == "closing_latest" %}selected{% endif %}>Closing latest</option>
-          </select>
-        </div>
-      </div>
-
-      {% if q or province or tender_type or source %}
-      <div class="search-actions">
-        <a href="{% url 'tenders:dashboard' %}" class="btn btn-ghost" id="clear-filters">Clear all filters</a>
-      </div>
-      {% endif %}
-    </form>
-
-    <div class="filter-tags" id="filter-tags" hidden></div>
   </div>
 </section>
 
-<section class="results-section" id="tender-results" aria-labelledby="results-title">
+<section class="results-section" id="tender-results">
   <div class="container">
     <header class="results-head">
-      <h2 id="results-title">Tender listing</h2>
+      <h2>Tender listing</h2>
       <p class="results-count">
         {% if page_obj %}
         Showing <strong>{{ page_obj.start_index }}–{{ page_obj.end_index }}</strong> of <strong>{{ page_obj.paginator.count }}</strong>
@@ -105,58 +107,50 @@
     </header>
 
     {% if tenders %}
-    <div class="table-scroller" id="table-scroller">
-      <table class="data-table" id="tender-table">
-        <thead>
-          <tr>
-            <th scope="col" class="col-no">No.</th>
-            <th scope="col" class="col-title">Title &amp; reference</th>
-            <th scope="col" class="col-authority">Issuing authority</th>
-            <th scope="col" class="col-province">Province</th>
-            <th scope="col" class="col-type">Type</th>
-            <th scope="col" class="col-source">Source</th>
-            <th scope="col" class="col-closing">Closing</th>
-            <th scope="col" class="col-action"><span class="visually-hidden">Link</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for tender in tenders %}
-          <tr class="data-row {% if tender.days_until_close is not None and tender.days_until_close <= 7 %}is-urgent{% endif %}"
-              data-href="{{ tender.download_url }}"
-              tabindex="0">
-            <td class="col-no" data-label="No.">{{ page_obj.start_index|add:forloop.counter0 }}</td>
-            <td class="col-title" data-label="Title">
-              <span class="row-ref">{{ tender.external_id }}</span>
-              <span class="row-title">{{ tender.title }}</span>
-              {% if tender.category %}<span class="row-category">{{ tender.category }}</span>{% endif %}
-            </td>
-            <td class="col-authority" data-label="Authority">{{ tender.department|default:"—" }}</td>
-            <td class="col-province" data-label="Province">{{ tender.province|default:"—" }}</td>
-            <td class="col-type" data-label="Type">
-              <span class="tag">{{ tender.get_tender_type_display }}</span>
-            </td>
-            <td class="col-source" data-label="Source">{{ tender.source.name }}</td>
-            <td class="col-closing" data-label="Closing">
-              <span class="date {% if tender.days_until_close is not None and tender.days_until_close <= 7 %}date-urgent{% endif %}">
+    <ul class="tender-cards">
+      {% for tender in tenders %}
+      <li>
+        <article class="tender-card {% if tender.days_until_close is not None and tender.days_until_close <= 7 %}is-urgent{% endif %}"
+                 data-href="{{ tender.download_url }}" tabindex="0">
+          <div class="tender-card-top">
+            <div class="tender-card-main">
+              <span class="tender-num">{{ page_obj.start_index|add:forloop.counter0 }}</span>
+              <div>
+                <span class="tender-ref">{{ tender.external_id }}</span>
+                <h3 class="tender-title">{{ tender.title }}</h3>
+                {% if tender.category %}<p class="tender-category">{{ tender.category }}</p>{% endif %}
+              </div>
+            </div>
+            <div class="tender-closing">
+              <span class="closing-label">Closes</span>
+              <time class="closing-date {% if tender.days_until_close is not None and tender.days_until_close <= 7 %}is-urgent{% endif %}">
                 {{ tender.closing_date|default:"TBC" }}
-              </span>
+              </time>
               {% if tender.days_until_close is not None %}
               <span class="days-badge" data-days="{{ tender.days_until_close }}">
                 {% if tender.days_until_close == 0 %}Today
-                {% elif tender.days_until_close == 1 %}1 day
-                {% elif tender.days_until_close > 0 %}{{ tender.days_until_close }} days
+                {% elif tender.days_until_close == 1 %}1 day left
+                {% elif tender.days_until_close > 0 %}{{ tender.days_until_close }} days left
                 {% else %}Closed{% endif %}
               </span>
               {% endif %}
-            </td>
-            <td class="col-action" data-label="">
-              <a href="{{ tender.download_url }}" target="_blank" rel="noopener" class="row-link" tabindex="-1">Open</a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+            </div>
+          </div>
+
+          <ul class="tender-meta">
+            <li><span>Authority</span><strong>{{ tender.department|default:"—" }}</strong></li>
+            <li><span>Province</span><strong>{{ tender.province|default:"—" }}</strong></li>
+            <li><span>Type</span><strong class="tag">{{ tender.get_tender_type_display }}</strong></li>
+            <li><span>Source</span><strong>{{ tender.source.name }}</strong></li>
+          </ul>
+
+          <div class="tender-card-foot">
+            <a href="{{ tender.download_url }}" target="_blank" rel="noopener" class="btn btn-open">View publication</a>
+          </div>
+        </article>
+      </li>
+      {% endfor %}
+    </ul>
 
     {% if page_obj.has_other_pages %}
     <nav class="pager" aria-label="Pagination">
@@ -173,7 +167,7 @@
     {% else %}
     <div class="no-results">
       <p>No tenders match your search.</p>
-      <p class="no-results-hint">Try different keywords or run <code>python manage.py load_sample_tenders</code></p>
+      <p class="no-results-hint">Run <code>python manage.py load_sample_tenders</code> to load examples.</p>
     </div>
     {% endif %}
   </div>

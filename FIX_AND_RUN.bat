@@ -44,12 +44,12 @@ echo.
 echo CHECK THIS FIRST in browser:
 echo   http://127.0.0.1:8000/health/
 echo.
-echo Must say:  UI: table-v3
+echo Must say:  UI: rounded-v4
 echo.
 echo Then open (use Incognito or Ctrl+F5):
 echo   http://127.0.0.1:8000/
 echo.
-echo Footer must say: Interface table-v3
+echo Footer must say: Interface rounded-v4
 echo ============================================
 
 python manage.py runserver
