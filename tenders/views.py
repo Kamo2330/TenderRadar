@@ -1,9 +1,9 @@
-from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.paginator import Paginator
 from django.db.utils import OperationalError
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.utils import timezone
 
 from .forms import (
     AlertPreferenceForm,
@@ -11,7 +11,6 @@ from .forms import (
     ClientForm,
     ClientSubscriptionForm,
     PROVINCE_CHOICES,
-    SignUpForm,
 )
 from django.db.models import Count, Q
 from django.utils import timezone as dj_timezone
@@ -25,6 +24,7 @@ from .models import (
     Tender,
     TenderApplication,
 )
+from .tender_queryset import filter_tenders
 
 User = get_user_model()
 
@@ -33,7 +33,6 @@ User = get_user_model()
 def logout_view(request):
     if request.method in ("POST", "GET"):
         logout(request)
-        return redirect("login")
     return redirect("tenders:dashboard")
 
 
@@ -42,53 +41,59 @@ def staff_required(view_func):
     return decorated
 
 
-def signup_view(request):
-    if request.user.is_authenticated:
-        return redirect("tenders:dashboard")
-
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = User.objects.create_user(
-                username=form.cleaned_data["username"],
-                email=form.cleaned_data["email"],
-                password=form.cleaned_data["password1"],
-            )
-            BusinessProfile.objects.create(
-                user=user,
-                company_name=form.cleaned_data["company_name"],
-            )
-            AlertPreference.objects.create(user=user)
-            login(request, user)
-            return redirect("tenders:dashboard")
-    else:
-        form = SignUpForm()
-
-    return render(request, "registration/signup.html", {"form": form})
-
-
-@login_required
 def dashboard(request):
-    """
-    For staff: show global tender dashboard (all tenders).
-    For clients: show only matched tenders (their own jobs).
-    """
-    today = timezone.localdate()
-
-    # If this user is a client, redirect to their own tender view.
-    try:
-        if hasattr(request.user, "client_profile"):
-            return redirect("tenders:client_tenders")
-    except Exception:  # noqa: BLE001
-        pass
+    """Public tender dashboard — no login required."""
+    q = request.GET.get("q", "").strip()
+    tender_type = request.GET.get("tender_type", "").strip()
+    province = request.GET.get("province", "").strip()
+    source = request.GET.get("source", "").strip()
+    sort = request.GET.get("sort", "newest").strip() or "newest"
 
     try:
-        tenders = list(
-            Tender.objects.filter(closing_date__gte=today).order_by("-created_at")[:50]
+        tenders_qs = filter_tenders(
+            q=q,
+            tender_type=tender_type,
+            province=province,
+            source=source,
+            date_filter="open",
+            sort=sort,
         )
+        total_count = tenders_qs.count()
+        source_count = (
+            Tender.objects.values("source_id").distinct().count()
+        )
+        paginator = Paginator(tenders_qs, 25)
+        page_obj = paginator.get_page(request.GET.get("page"))
+        tenders = list(page_obj.object_list)
     except OperationalError:
         tenders = []
-    context = {"tenders": tenders}
+        page_obj = None
+        total_count = 0
+        source_count = 0
+
+    context = {
+        "tenders": tenders,
+        "page_obj": page_obj,
+        "q": q,
+        "tender_type": tender_type,
+        "province": province,
+        "source": source,
+        "sort": sort,
+        "total_count": total_count,
+        "source_count": source_count,
+        "tender_type_options": Tender.TenderType.choices,
+        "province_options": (
+            Tender.objects.exclude(province="")
+            .values_list("province", flat=True)
+            .distinct()
+            .order_by("province")
+        ),
+        "source_options": (
+            Tender.objects.values_list("source__slug", "source__name")
+            .distinct()
+            .order_by("source__name")
+        ),
+    }
     return render(request, "tenders/dashboard.html", context)
 
 

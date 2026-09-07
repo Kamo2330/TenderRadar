@@ -36,12 +36,7 @@ class TenderAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("token", response.data)
 
-    def test_tender_list_requires_auth(self):
-        response = self.client.get(reverse("api_tender_list"))
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_tender_list_returns_results_for_authenticated_user(self):
-        self.client.force_authenticate(user=self.user)
+    def test_tender_list_public_access(self):
         response = self.client.get(reverse("api_tender_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)

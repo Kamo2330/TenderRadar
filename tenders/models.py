@@ -91,6 +91,14 @@ class Tender(models.Model):
     def download_url(self) -> str:
         return self.url or ""
 
+    @property
+    def days_until_close(self):
+        from django.utils import timezone
+
+        if not self.closing_date:
+            return None
+        return (self.closing_date - timezone.localdate()).days
+
     def __str__(self) -> str:
         return self.title
 

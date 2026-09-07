@@ -19,7 +19,7 @@ User = get_user_model()
 
 class TenderListAPIView(generics.ListAPIView):
     serializer_class = TenderSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         params = self.request.query_params
@@ -35,12 +35,12 @@ class TenderListAPIView(generics.ListAPIView):
 
 class TenderDetailAPIView(generics.RetrieveAPIView):
     serializer_class = TenderSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     queryset = Tender.objects.select_related("source").all()
 
 
 class TenderMetaAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         return Response(

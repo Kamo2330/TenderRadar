@@ -111,6 +111,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 if DEBUG:
     STORAGES = {
@@ -132,6 +133,7 @@ EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
 )
 
+LOGIN_URL = "/admin/login/"
 LOGIN_REDIRECT_URL = "/"
 
 REST_FRAMEWORK = {
