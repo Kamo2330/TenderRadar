@@ -1,2 +1,2 @@
 def ui_version(_request):
-    return {"UI_VERSION": "8"}
+    return {"UI_VERSION": "9"}
