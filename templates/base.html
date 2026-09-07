@@ -4,38 +4,60 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}TenderRadar{% endblock %} — South African Tenders &amp; RFQs</title>
-    <meta name="description" content="Browse open government and private-sector tenders across South Africa.">
-    <!-- TENDERRADAR-PUBLIC-DASHBOARD -->
+    <title>{% block title %}Tender Register{% endblock %} | TenderRadar</title>
+    <meta name="description" content="Official-style register of open tenders and requests for quotation published across South Africa.">
     <link rel="stylesheet" href="{% static 'css/tenderradar.css' %}">
     {% block extra_head %}{% endblock %}
   </head>
   <body>
+    <div class="gov-banner" role="note">
+      <div class="gov-banner-inner">
+        <span class="gov-banner-label">Public procurement register</span>
+        <span class="gov-banner-text">Aggregated from published government and sector sources</span>
+      </div>
+    </div>
+
     <header class="site-header">
       <div class="header-inner">
         <a href="{% url 'tenders:dashboard' %}" class="brand">
-          <span class="brand-icon" aria-hidden="true">📡</span>
-          <span>
-            TenderRadar
-            <span class="header-tagline">SA Tender Discovery</span>
+          <span class="brand-mark" aria-hidden="true">TR</span>
+          <span class="brand-text">
+            <span class="brand-name">TenderRadar</span>
+            <span class="brand-subtitle">South African Tender &amp; RFQ Register</span>
           </span>
         </a>
-        <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Menu">☰</button>
+        <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation menu">
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+        </button>
         <nav class="site-nav" id="site-nav">
-          <a href="{% url 'tenders:dashboard' %}">Browse Tenders</a>
+          <a href="{% url 'tenders:dashboard' %}" class="nav-link nav-link--active">Tender Register</a>
+          <a href="/admin/" class="nav-link">Administration</a>
         </nav>
       </div>
     </header>
 
     {% block hero %}{% endblock %}
 
-    <main class="main-content">
+    <main class="main-content" id="main-content">
       {% block content %}{% endblock %}
     </main>
 
     <footer class="site-footer">
-      <p>TenderRadar aggregates public tender data from eTenders, Tenders-SA and other sources.</p>
-      <p style="margin-top:0.35rem;opacity:0.5;">Data is indicative — always verify on the official source.</p>
+      <div class="footer-inner">
+        <div class="footer-disclaimer">
+          <h2 class="footer-heading">Disclaimer</h2>
+          <p>
+            TenderRadar provides an indicative listing compiled from publicly available sources including
+            eTenders and Tenders-SA. All submissions, deadlines, and specifications must be verified on
+            the issuing authority's official publication before any response is prepared.
+          </p>
+        </div>
+        <div class="footer-meta">
+          <p>&copy; {% now "Y" %} TenderRadar. For informational purposes only.</p>
+        </div>
+      </div>
     </footer>
 
     <script src="{% static 'js/tenderradar.js' %}"></script>

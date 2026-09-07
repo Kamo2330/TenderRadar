@@ -1,33 +1,60 @@
 (function () {
   "use strict";
 
-  // Mobile navigation toggle
   var toggle = document.getElementById("nav-toggle");
   var nav = document.getElementById("site-nav");
+
   if (toggle && nav) {
     toggle.addEventListener("click", function () {
-      nav.classList.toggle("open");
+      var isOpen = nav.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      toggle.setAttribute(
+        "aria-label",
+        isOpen ? "Close navigation menu" : "Open navigation menu"
+      );
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!nav.classList.contains("is-open")) {
+        return;
+      }
+      if (!nav.contains(event.target) && !toggle.contains(event.target)) {
+        nav.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.setAttribute("aria-label", "Open navigation menu");
+      }
     });
   }
 
-  // Auto-submit filters when selects change (optional UX boost)
   var filterForm = document.getElementById("filter-form");
   if (filterForm) {
-    var selects = filterForm.querySelectorAll("select");
-    selects.forEach(function (sel) {
-      sel.addEventListener("change", function () {
+    var autoSubmitFields = filterForm.querySelectorAll("select");
+    autoSubmitFields.forEach(function (field) {
+      field.addEventListener("change", function () {
         filterForm.submit();
       });
     });
+
+    var searchInput = filterForm.querySelector("#q");
+    if (searchInput) {
+      searchInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          filterForm.submit();
+        }
+      });
+    }
   }
 
-  // Highlight cards closing within 7 days
-  document.querySelectorAll("[data-days-left]").forEach(function (el) {
-    var days = parseInt(el.getAttribute("data-days-left"), 10);
-    if (!isNaN(days) && days <= 7 && days >= 0) {
-      el.classList.add("urgent");
-    } else if (!isNaN(days) && days > 7) {
-      el.classList.add("normal");
+  document.querySelectorAll("[data-days-left]").forEach(function (element) {
+    var days = parseInt(element.getAttribute("data-days-left"), 10);
+    if (Number.isNaN(days)) {
+      return;
+    }
+    if (days <= 7 && days >= 0) {
+      element.classList.add("is-urgent");
+    } else if (days > 7) {
+      element.classList.add("is-normal");
     }
   });
 })();
