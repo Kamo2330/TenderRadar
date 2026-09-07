@@ -1,29 +1,17 @@
 """
 URL configuration for TenderRadar project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic import RedirectView
 
 from tenders import views as tender_views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('tenders.api_urls')),
-    path('accounts/signup/', tender_views.signup_view, name='signup'),
-    path('accounts/logout/', tender_views.logout_view, name='logout'),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('', include('tenders.urls')),
+    path("admin/", admin.site.urls),
+    path("api/", include("tenders.api_urls")),
+    path("accounts/login/", RedirectView.as_view(url="/", permanent=False)),
+    path("accounts/signup/", RedirectView.as_view(url="/", permanent=False)),
+    path("accounts/logout/", tender_views.logout_view, name="logout"),
+    path("", include("tenders.urls")),
 ]
