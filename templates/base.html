@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Tender Register{% endblock %} | TenderRadar</title>
     <meta name="description" content="Register of open tenders and requests for quotation published across South Africa.">
-    <link rel="stylesheet" href="{% static 'css/tenderradar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tenderradar.css' %}?v={{ UI_VERSION }}">
     {% block extra_head %}{% endblock %}
   </head>
   <body>
@@ -57,7 +57,7 @@
       </div>
     </footer>
 
-    <script src="{% static 'js/tenderradar.js' %}"></script>
+    <script src="{% static 'js/tenderradar.js' %}?v={{ UI_VERSION }}"></script>
     {% block extra_js %}{% endblock %}
   </body>
 </html>
