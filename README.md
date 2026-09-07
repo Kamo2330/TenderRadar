@@ -1,20 +1,11 @@
 # TenderRadar
 
-South African tender register — Django only. Public dashboard at `/`.
+South African tender listing — Django app. Open tenders at `/`. No login.
 
-**Use this repository on `main` only.** Old folders and old branches are outdated.
-
-## Fresh start (Windows)
-
-Delete every old copy first, then clone once:
+## Run (Windows)
 
 ```cmd
-cd C:\Users\Admin\Desktop
-rmdir /s /q TenderRadar
-rmdir /s /q TenderRadar_LIVE
-rmdir /s /q TenderRadar_NEW
-git clone https://github.com/Kamo2330/TenderRadar.git TenderRadar
-cd TenderRadar
+cd C:\Users\Admin\Desktop\TenderRadar
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
@@ -24,18 +15,14 @@ python manage.py load_sample_tenders
 python manage.py runserver
 ```
 
-Or double-click **`CLEAN_PC.bat`** then **`RUN.bat`**.
+Open http://127.0.0.1:8000/ in Incognito.
 
-Open **http://127.0.0.1:8000/** in **Incognito**.
+Health check: http://127.0.0.1:8000/health/ must say `UI: square-v7`.
 
-Check **http://127.0.0.1:8000/health/** — it must say `UI: square-v6`.
-
-## Daily run
+## Load live tenders
 
 ```cmd
-cd C:\Users\Admin\Desktop\TenderRadar
-.venv\Scripts\activate
-python manage.py runserver
+python manage.py scrape_tenders
 ```
 
 ## License

@@ -110,7 +110,7 @@
     <ul class="tender-cards">
       {% for tender in tenders %}
       <li>
-        <article class="tender-card {% if tender.days_until_close is not None and tender.days_until_close <= 7 %}is-urgent{% endif %}"
+        <article class="tender-card {% cycle 'is-odd' 'is-even' %} {% if tender.days_until_close is not None and tender.days_until_close <= 7 %}is-urgent{% endif %}"
                  data-href="{{ tender.download_url }}" tabindex="0">
           <div class="tender-card-top">
             <div class="tender-card-main">

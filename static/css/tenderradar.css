@@ -466,36 +466,46 @@ a:hover { color: var(--color-navy-dark); }
 
 .results-count strong { color: var(--color-text); }
 
-/* Tender cards */
+/* Tender cards — each listing is a separate block */
 .tender-cards {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 1.35rem;
+}
+
+.tender-cards > li {
+  list-style: none;
 }
 
 .tender-card {
   background: var(--color-surface);
-  border-radius: var(--radius-md);
-  padding: 1.15rem 1.25rem;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s, transform 0.2s;
+  border: 1px solid var(--color-border);
+  border-left: 6px solid var(--color-navy);
+  padding: 1.2rem 1.3rem;
   cursor: pointer;
+}
+
+.tender-card.is-even {
+  background: #e8edf2;
+  border-left-color: var(--color-navy-muted);
+}
+
+.tender-card.is-odd {
+  background: var(--color-surface);
 }
 
 .tender-card:hover,
 .tender-card:focus {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-  outline: none;
+  outline: 2px solid var(--color-navy);
+  outline-offset: 0;
 }
 
 .tender-card.is-urgent {
-  background: linear-gradient(to right, var(--color-urgent-bg), var(--color-surface));
-  border-left: 4px solid var(--color-urgent);
-  border-radius: var(--radius-md);
+  background: var(--color-urgent-bg);
+  border-left-color: var(--color-urgent);
 }
 
 .tender-card-top {
@@ -521,9 +531,8 @@ a:hover { color: var(--color-navy-dark); }
   place-items: center;
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--color-navy);
-  background: var(--color-bg);
-  border-radius: var(--radius-full);
+  color: #fff;
+  background: var(--color-navy);
 }
 
 .tender-ref {
