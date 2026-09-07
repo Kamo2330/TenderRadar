@@ -1,2 +1,2 @@
 def ui_version(_request):
-    return {"UI_VERSION": "clean-v5"}
+    return {"UI_VERSION": "square-v6"}

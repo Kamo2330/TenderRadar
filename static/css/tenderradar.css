@@ -1,4 +1,4 @@
-/* TenderRadar — rounded, soft layout */
+/* TenderRadar — formal square layout */
 
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&display=swap");
 
@@ -21,10 +21,10 @@
   --font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
   --max-width: 1140px;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-full: 999px;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-full: 0;
   --shadow-sm: 0 2px 8px rgba(27, 40, 56, 0.06);
   --shadow-md: 0 8px 24px rgba(27, 40, 56, 0.08);
   --shadow-lg: 0 16px 40px rgba(27, 40, 56, 0.1);
@@ -183,7 +183,7 @@ a:hover { color: var(--color-navy-dark); }
   height: 2px;
   margin: 0 auto;
   background: var(--color-navy);
-  border-radius: 2px;
+  border-radius: 0;
 }
 
 /* Hero */
@@ -635,7 +635,7 @@ mark.highlight {
   background: var(--color-accent-light);
   color: inherit;
   padding: 0 0.15em;
-  border-radius: 3px;
+  border-radius: 0;
 }
 
 /* Pagination */

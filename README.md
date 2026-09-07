@@ -28,7 +28,7 @@ Or double-click **`CLEAN_PC.bat`** then **`RUN.bat`**.
 
 Open **http://127.0.0.1:8000/** in **Incognito**.
 
-Check **http://127.0.0.1:8000/health/** — it must say `UI: clean-v5`.
+Check **http://127.0.0.1:8000/health/** — it must say `UI: square-v6`.
 
 ## Daily run
 

@@ -47,7 +47,7 @@ def health_check(request):
 
     return HttpResponse(
         "TENDERRADAR OK\n"
-        "UI: clean-v5\n"
+        "UI: square-v6\n"
         f"Django {django.get_version()}\n"
         "Open: http://127.0.0.1:8000/\n"
         "If the page looks old: git pull origin main then Ctrl+F5\n",
