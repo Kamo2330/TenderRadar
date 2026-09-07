@@ -38,10 +38,7 @@ setup.bat
 npm run dev
 ```
 
-## Signup URLs
-
-| Django | http://127.0.0.1:8000/accounts/signup/ |
-| Next.js | http://localhost:3000/signup |
+Open http://127.0.0.1:8000/ — lands directly on the tender dashboard. No login required.
 
 ## No Git needed after Step 1
 
