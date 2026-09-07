@@ -38,8 +38,7 @@ On macOS or Linux, use `source .venv/bin/activate` and `cp .env.example .env`.
 
 Open http://127.0.0.1:8000/
 
-If the page looks outdated, use Incognito or press Ctrl+Shift+R.  
-http://127.0.0.1:8000/health/ should show `UI: square-v7`.
+If the page looks outdated, use Incognito or press Ctrl+Shift+R.
 
 ## Commands
 

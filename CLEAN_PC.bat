@@ -35,6 +35,5 @@ echo.
 echo Clean copy is ready at C:\Users\Admin\Desktop\TenderRadar
 echo Next: python manage.py runserver
 echo Then open Incognito: http://127.0.0.1:8000/
-echo Health must say: UI: square-v7
 echo.
 pause
