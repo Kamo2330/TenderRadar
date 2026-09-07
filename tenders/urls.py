@@ -5,6 +5,7 @@ from . import views
 app_name = "tenders"
 
 urlpatterns = [
+    path("health/", views.health_check, name="health"),
     path("", views.dashboard, name="dashboard"),
     path("preferences/", views.preferences, name="preferences"),
     # Client portal

@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 from django.db.utils import OperationalError
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
@@ -39,6 +40,19 @@ def logout_view(request):
 def staff_required(view_func):
     decorated = login_required(user_passes_test(lambda u: u.is_staff)(view_func))
     return decorated
+
+
+def health_check(request):
+    """Plain-text check — if you see this, you hit the real TenderRadar server."""
+    import django
+
+    return HttpResponse(
+        "TENDERRADAR OK\n"
+        f"Django {django.get_version()}\n"
+        "Public tender dashboard — NOT 2ndhand\n"
+        "Open: http://127.0.0.1:8000/\n",
+        content_type="text/plain",
+    )
 
 
 def dashboard(request):
