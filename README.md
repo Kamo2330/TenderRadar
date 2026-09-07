@@ -2,30 +2,21 @@
 
 South African tender discovery — Django app with public dashboard and scraper.
 
-Browse open tenders at `/`. Staff tools and admin live under `/admin/` and `/staff/`.
-
-## Quick start (Windows)
+## Run locally (Windows)
 
 ```cmd
-git clone https://github.com/Kamo2330/TenderRadar.git
-cd TenderRadar
+cd C:\Users\Admin\Desktop\TenderRadar
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 copy .env.example .env
 python manage.py migrate
-python manage.py createsuperuser
+python manage.py runserver
 ```
 
-Double-click **`RUN.bat`** or:
+Open http://127.0.0.1:8000/
 
-```cmd
-python manage.py runserver 8765
-```
-
-Open http://127.0.0.1:8765/ — no login required for the public dashboard.
-
-Use **`VERIFY.bat`** to confirm the server responds (avoids browser cache issues on port 8000).
+No login required for the public tender register. Admin: http://127.0.0.1:8000/admin/
 
 ## Load tender data
 

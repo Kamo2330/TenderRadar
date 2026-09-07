@@ -48,7 +48,7 @@ def health_check(request):
     return HttpResponse(
         "TENDERRADAR OK\n"
         f"Django {django.get_version()}\n"
-        "Open: http://127.0.0.1:8765/\n",
+        "Open: http://127.0.0.1:8000/\n",
         content_type="text/plain",
     )
 
