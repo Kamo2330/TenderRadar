@@ -5,60 +5,55 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Tender Register{% endblock %} | TenderRadar</title>
-    <meta name="description" content="Official-style register of open tenders and requests for quotation published across South Africa.">
+    <meta name="description" content="Register of open tenders and requests for quotation published across South Africa.">
     <link rel="stylesheet" href="{% static 'css/tenderradar.css' %}">
     {% block extra_head %}{% endblock %}
   </head>
   <body>
-    <a class="skip-link" href="#main-content">Skip to register</a>
-
-    <div class="gov-banner" role="note">
-      <div class="layout-container gov-banner-inner">
-        <span class="gov-banner-label">Public procurement register</span>
-        <span class="gov-banner-text">Aggregated from published government and sector sources</span>
-      </div>
-    </div>
+    <a class="skip-link" href="#tender-results">Skip to tender listing</a>
 
     <header class="site-header">
-      <div class="layout-container header-inner">
+      <div class="top-bar">
+        <div class="container top-bar-inner">
+          <span class="top-bar-badge">Public procurement register</span>
+          <span class="top-bar-note">Data sourced from eTenders, Tenders-SA and related publications</span>
+        </div>
+      </div>
+      <div class="container header-main">
         <a href="{% url 'tenders:dashboard' %}" class="brand">
-          <span class="brand-mark" aria-hidden="true">TR</span>
+          <span class="brand-mark">TR</span>
           <span class="brand-text">
-            <span class="brand-name">TenderRadar</span>
-            <span class="brand-subtitle">South African Tender &amp; RFQ Register</span>
+            <strong>TenderRadar</strong>
+            <small>South African Tender &amp; RFQ Register</small>
           </span>
         </a>
-        <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation menu">
-          <span class="nav-toggle-bar"></span>
-          <span class="nav-toggle-bar"></span>
-          <span class="nav-toggle-bar"></span>
+        <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu">
+          <span></span><span></span><span></span>
         </button>
-        <nav class="site-nav" id="site-nav" aria-label="Primary">
-          <a href="{% url 'tenders:dashboard' %}" class="nav-link nav-link--active">Tender Register</a>
-          <a href="/admin/" class="nav-link">Administration</a>
+        <nav class="main-nav" id="main-nav">
+          <a href="{% url 'tenders:dashboard' %}" class="is-active">Register</a>
+          <a href="/admin/">Admin</a>
         </nav>
       </div>
     </header>
 
     {% block hero %}{% endblock %}
 
-    <main class="main-content" id="main-content">
+    <main class="page-main" id="main-content">
       {% block content %}{% endblock %}
     </main>
 
     <footer class="site-footer">
-      <div class="layout-container footer-inner">
-        <div class="footer-disclaimer">
-          <h2 class="footer-heading">Disclaimer</h2>
+      <div class="container footer-grid">
+        <section>
+          <h2>Disclaimer</h2>
           <p>
-            TenderRadar provides an indicative listing compiled from publicly available sources including
-            eTenders and Tenders-SA. All submissions, deadlines, and specifications must be verified on
-            the issuing authority's official publication before any response is prepared.
+            TenderRadar lists publicly available procurement notices for reference only.
+            Verify all deadlines and specifications on the official issuing authority's publication
+            before preparing a submission.
           </p>
-        </div>
-        <div class="footer-meta">
-          <p>&copy; {% now "Y" %} TenderRadar. For informational purposes only.</p>
-        </div>
+        </section>
+        <p class="footer-copy">&copy; {% now "Y" %} TenderRadar</p>
       </div>
     </footer>
 

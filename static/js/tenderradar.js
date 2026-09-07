@@ -1,158 +1,138 @@
 (function () {
   "use strict";
 
-  function qs(selector, root) {
-    return (root || document).querySelector(selector);
+  function $(sel, root) {
+    return (root || document).querySelector(sel);
   }
 
-  function qsa(selector, root) {
-    return Array.prototype.slice.call((root || document).querySelectorAll(selector));
+  function $$(sel, root) {
+    return Array.prototype.slice.call((root || document).querySelectorAll(sel));
   }
 
-  /* Mobile navigation */
-  var toggle = qs("#nav-toggle");
-  var nav = qs("#site-nav");
+  /* Mobile menu */
+  var menuBtn = $("#menu-btn");
+  var mainNav = $("#main-nav");
 
-  if (toggle && nav) {
-    toggle.addEventListener("click", function () {
-      var isOpen = nav.classList.toggle("is-open");
-      toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      toggle.setAttribute(
-        "aria-label",
-        isOpen ? "Close navigation menu" : "Open navigation menu"
-      );
-    });
-
-    document.addEventListener("click", function (event) {
-      if (!nav.classList.contains("is-open")) {
-        return;
-      }
-      if (!nav.contains(event.target) && !toggle.contains(event.target)) {
-        nav.classList.remove("is-open");
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.setAttribute("aria-label", "Open navigation menu");
-      }
+  if (menuBtn && mainNav) {
+    menuBtn.addEventListener("click", function () {
+      var open = mainNav.classList.toggle("is-open");
+      menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     });
   }
 
-  /* Collapsible filter panel (mobile) */
-  var filterToggle = qs("#filter-toggle");
-  var filterPanel = qs("#filter-panel");
+  /* Advanced filters toggle */
+  var advToggle = $("#advanced-toggle");
+  var advPanel = $("#search-advanced");
+  var filterForm = $("#filter-form");
 
-  if (filterToggle && filterPanel) {
-    filterToggle.addEventListener("click", function () {
-      var collapsed = filterPanel.classList.toggle("is-collapsed");
-      filterToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
-      qs(".filter-toggle-label", filterToggle).textContent = collapsed
-        ? "Show filters"
-        : "Hide filters";
-    });
+  function openAdvanced() {
+    if (!advPanel || !advToggle) return;
+    advPanel.classList.add("is-open");
+    advToggle.setAttribute("aria-expanded", "true");
+    advToggle.textContent = "Hide filters";
+  }
 
-    if (window.matchMedia("(max-width: 960px)").matches) {
-      filterPanel.classList.add("is-collapsed");
-      filterToggle.setAttribute("aria-expanded", "false");
-      qs(".filter-toggle-label", filterToggle).textContent = "Show filters";
+  if (advToggle && advPanel) {
+    var hasAdvanced =
+      $("#province", filterForm)?.value ||
+      $("#tender_type", filterForm)?.value ||
+      $("#source", filterForm)?.value ||
+      ($("#sort", filterForm)?.value && $("#sort", filterForm).value !== "newest");
+
+    if (hasAdvanced) {
+      openAdvanced();
     }
+
+    advToggle.addEventListener("click", function () {
+      var isOpen = advPanel.classList.toggle("is-open");
+      advToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      advToggle.textContent = isOpen ? "Hide filters" : "Advanced filters";
+    });
   }
 
-  /* Filter form */
-  var filterForm = qs("#filter-form");
+  /* Auto-submit selects */
   if (filterForm) {
-    qsa("select", filterForm).forEach(function (field) {
-      field.addEventListener("change", function () {
+    $$("select", filterForm).forEach(function (el) {
+      el.addEventListener("change", function () {
         filterForm.submit();
       });
     });
-
-    filterForm.addEventListener("submit", function () {
-      var register = qs(".register-main");
-      if (register) {
-        sessionStorage.setItem("tenderradar-scroll-target", "register");
-      }
-    });
   }
 
-  /* Scroll to results after filter */
-  if (sessionStorage.getItem("tenderradar-scroll-target") === "register") {
-    sessionStorage.removeItem("tenderradar-scroll-target");
-    var registerMain = qs(".register-main");
-    if (registerMain) {
-      registerMain.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }
-
-  /* Active filter chips */
-  var activeFilters = qs("#active-filters");
-  if (filterForm && activeFilters) {
-    var chipConfig = [
-      { name: "q", label: "Keyword" },
+  /* Filter tags */
+  var tagsEl = $("#filter-tags");
+  if (filterForm && tagsEl) {
+    var tagFields = [
+      { name: "q", label: "Search" },
       { name: "province", label: "Province" },
       { name: "tender_type", label: "Type" },
       { name: "source", label: "Source" },
     ];
 
-    chipConfig.forEach(function (config) {
-      var field = qs('[name="' + config.name + '"]', filterForm);
-      if (!field || !field.value) {
-        return;
-      }
+    tagFields.forEach(function (cfg) {
+      var field = $('[name="' + cfg.name + '"]', filterForm);
+      if (!field || !field.value) return;
 
-      var displayValue = field.value;
+      var text = field.value;
       if (field.tagName === "SELECT") {
-        var selected = field.options[field.selectedIndex];
-        if (selected) {
-          displayValue = selected.text;
-        }
+        text = field.options[field.selectedIndex]?.text || text;
       }
 
-      activeFilters.hidden = false;
-
-      var chip = document.createElement("span");
-      chip.className = "filter-chip";
-      chip.innerHTML =
-        config.label + ": " + displayValue +
-        ' <button type="button" aria-label="Remove ' + config.label + ' filter">&times;</button>';
-
-      chip.querySelector("button").addEventListener("click", function () {
+      tagsEl.hidden = false;
+      var tag = document.createElement("span");
+      tag.className = "filter-tag";
+      tag.innerHTML = cfg.label + ": " + text + ' <button type="button" aria-label="Remove">&times;</button>';
+      tag.querySelector("button").addEventListener("click", function () {
         field.value = "";
         filterForm.submit();
       });
-
-      activeFilters.appendChild(chip);
+      tagsEl.appendChild(tag);
     });
   }
 
-  /* Closing date urgency styling */
-  qsa("[data-days-left]").forEach(function (element) {
-    var days = parseInt(element.getAttribute("data-days-left"), 10);
-    if (Number.isNaN(days)) {
-      return;
-    }
-    if (days <= 7 && days >= 0) {
-      element.classList.add("is-urgent");
-    } else if (days > 7) {
-      element.classList.add("is-normal");
-    }
+  /* Urgency badges */
+  $$("[data-days]").forEach(function (el) {
+    var days = parseInt(el.getAttribute("data-days"), 10);
+    if (isNaN(days)) return;
+    el.classList.add(days <= 7 && days >= 0 ? "is-urgent" : "is-ok");
   });
 
-  /* Expandable descriptions */
-  qsa("[data-expandable]").forEach(function (paragraph) {
-    paragraph.classList.add("is-clamped");
+  /* Clickable table rows */
+  $$(".data-row[data-href]").forEach(function (row) {
+    row.addEventListener("click", function (e) {
+      if (e.target.closest("a")) return;
+      var href = row.getAttribute("data-href");
+      if (href) window.open(href, "_blank", "noopener");
+    });
 
-    if (paragraph.scrollHeight <= paragraph.clientHeight + 2) {
-      return;
-    }
-
-    var button = paragraph.parentElement.querySelector(".expand-toggle");
-    if (!button) {
-      return;
-    }
-
-    button.hidden = false;
-    button.addEventListener("click", function () {
-      var expanded = paragraph.classList.toggle("is-clamped");
-      button.setAttribute("aria-expanded", expanded ? "false" : "true");
-      button.textContent = expanded ? "Show full description" : "Show less";
+    row.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        var href = row.getAttribute("data-href");
+        if (href) window.open(href, "_blank", "noopener");
+      }
     });
   });
+
+  /* Highlight search terms in titles */
+  var query = $("#q")?.value?.trim();
+  if (query && query.length >= 2) {
+    var terms = query.split(/\s+/).filter(Boolean);
+    var pattern = new RegExp("(" + terms.map(function (t) {
+      return t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }).join("|") + ")", "gi");
+
+    $$(".row-title").forEach(function (el) {
+      var html = el.textContent.replace(pattern, "<mark class=\"highlight\">$1</mark>");
+      if (html !== el.textContent) el.innerHTML = html;
+    });
+  }
+
+  /* Scroll to results on search */
+  if (window.location.search && $("#tender-results")) {
+    requestAnimationFrame(function () {
+      $("#tender-results").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
 })();

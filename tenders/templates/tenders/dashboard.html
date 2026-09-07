@@ -1,54 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Open Tenders &amp; RFQs{% endblock %}
+{% block title %}Open Tenders{% endblock %}
 
 {% block hero %}
-<section class="page-header">
-  <div class="layout-container page-header-inner">
-    <div class="page-header-copy">
-      <p class="page-eyebrow">National tender register</p>
-      <h1>Open tenders and requests for quotation</h1>
-      <p class="page-lead">
-        Published procurement opportunities from government departments, municipalities,
-        state-owned entities, and registered sector sources.
-      </p>
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <h1>Open Tenders &amp; RFQs</h1>
+      <p>Government, municipal, and sector procurement opportunities across South Africa.</p>
     </div>
     {% if total_count is not None %}
-    <dl class="summary-stats">
-      <div class="summary-stat">
-        <dt>Open opportunities</dt>
-        <dd>{{ total_count|default:"0" }}</dd>
-      </div>
-      <div class="summary-stat">
-        <dt>Registered sources</dt>
-        <dd>{{ source_count|default:"0" }}</dd>
-      </div>
-    </dl>
+    <ul class="hero-metrics">
+      <li>
+        <span class="metric-value">{{ total_count|default:"0" }}</span>
+        <span class="metric-label">Open</span>
+      </li>
+      <li>
+        <span class="metric-value">{{ source_count|default:"0" }}</span>
+        <span class="metric-label">Sources</span>
+      </li>
+    </ul>
     {% endif %}
   </div>
 </section>
 {% endblock %}
 
 {% block content %}
-<div class="register-layout">
-  <aside class="filter-sidebar" aria-labelledby="filter-heading">
-    <div class="filter-sidebar-header">
-      <h2 id="filter-heading">Search criteria</h2>
-      <button type="button" class="filter-toggle" id="filter-toggle" aria-expanded="true" aria-controls="filter-panel">
-        <span class="filter-toggle-label">Hide filters</span>
+<section class="search-section" aria-labelledby="search-title">
+  <div class="container">
+    <div class="search-head">
+      <h2 id="search-title">Search the register</h2>
+      <button type="button" class="search-advanced-toggle" id="advanced-toggle" aria-expanded="false" aria-controls="filter-form">
+        Advanced filters
       </button>
     </div>
 
-    <div class="filter-panel" id="filter-panel">
-      <p class="panel-subtitle">Refine the register by keyword, geography, classification, or source.</p>
+    <form method="get" id="filter-form" class="search-form" role="search">
+      <div class="search-primary">
+        <label class="visually-hidden" for="q">Search keywords</label>
+        <input type="search" id="q" name="q" value="{{ q }}" placeholder="Search by title, department, category or reference…" autocomplete="off">
+        <button type="submit" class="btn btn-search">Search</button>
+      </div>
 
-      <form method="get" id="filter-form" class="filter-form" role="search">
-        <div class="filter-field">
-          <label for="q">Keyword or reference</label>
-          <input type="search" id="q" name="q" value="{{ q }}" placeholder="Title, department, category…" autocomplete="off">
-        </div>
-
-        <div class="filter-field">
+      <div class="search-advanced" id="search-advanced">
+        <div class="field">
           <label for="province">Province</label>
           <select id="province" name="province">
             <option value="">All provinces</option>
@@ -57,9 +52,8 @@
             {% endfor %}
           </select>
         </div>
-
-        <div class="filter-field">
-          <label for="tender_type">Procurement type</label>
+        <div class="field">
+          <label for="tender_type">Type</label>
           <select id="tender_type" name="tender_type">
             <option value="">All types</option>
             {% for value, label in tender_type_options %}
@@ -67,9 +61,8 @@
             {% endfor %}
           </select>
         </div>
-
-        <div class="filter-field">
-          <label for="source">Publication source</label>
+        <div class="field">
+          <label for="source">Source</label>
           <select id="source" name="source">
             <option value="">All sources</option>
             {% for slug, name in source_options %}
@@ -77,138 +70,112 @@
             {% endfor %}
           </select>
         </div>
-
-        <div class="filter-field">
-          <label for="sort">Sort order</label>
+        <div class="field">
+          <label for="sort">Sort by</label>
           <select id="sort" name="sort">
-            <option value="newest" {% if sort == "newest" %}selected{% endif %}>Date published (newest first)</option>
-            <option value="closing_soon" {% if sort == "closing_soon" %}selected{% endif %}>Closing date (soonest first)</option>
-            <option value="closing_latest" {% if sort == "closing_latest" %}selected{% endif %}>Closing date (latest first)</option>
+            <option value="newest" {% if sort == "newest" %}selected{% endif %}>Newest published</option>
+            <option value="closing_soon" {% if sort == "closing_soon" %}selected{% endif %}>Closing soonest</option>
+            <option value="closing_latest" {% if sort == "closing_latest" %}selected{% endif %}>Closing latest</option>
           </select>
         </div>
-
-        <div class="filter-actions">
-          <button type="submit" id="filter-submit" class="btn btn-primary btn-block">Apply filters</button>
-          {% if q or province or tender_type or source %}
-          <a href="{% url 'tenders:dashboard' %}" class="btn btn-secondary btn-block" id="reset-filters">Reset criteria</a>
-          {% endif %}
-        </div>
-      </form>
-    </div>
-  </aside>
-
-  <section class="register-main" aria-labelledby="register-heading">
-    <div class="results-toolbar">
-      <div class="results-toolbar-start">
-        <h2 id="register-heading" class="register-title">Tender listing</h2>
-        <p class="results-summary">
-          {% if page_obj %}
-          Records <strong>{{ page_obj.start_index }}&ndash;{{ page_obj.end_index }}</strong>
-          of <strong>{{ page_obj.paginator.count }}</strong>
-          {% else %}
-          <strong>0</strong> records match the current criteria
-          {% endif %}
-        </p>
       </div>
-    </div>
 
-    <div class="active-filters" id="active-filters" hidden></div>
+      {% if q or province or tender_type or source %}
+      <div class="search-actions">
+        <a href="{% url 'tenders:dashboard' %}" class="btn btn-ghost" id="clear-filters">Clear all filters</a>
+      </div>
+      {% endif %}
+    </form>
+
+    <div class="filter-tags" id="filter-tags" hidden></div>
+  </div>
+</section>
+
+<section class="results-section" id="tender-results" aria-labelledby="results-title">
+  <div class="container">
+    <header class="results-head">
+      <h2 id="results-title">Tender listing</h2>
+      <p class="results-count">
+        {% if page_obj %}
+        Showing <strong>{{ page_obj.start_index }}–{{ page_obj.end_index }}</strong> of <strong>{{ page_obj.paginator.count }}</strong>
+        {% else %}
+        <strong>0</strong> results
+        {% endif %}
+      </p>
+    </header>
 
     {% if tenders %}
-    <ol class="tender-list" start="{{ page_obj.start_index|default:1 }}">
-      {% for tender in tenders %}
-      <li>
-        <article class="tender-entry {% if tender.days_until_close is not None and tender.days_until_close <= 7 %}tender-entry--urgent{% endif %}" data-tender-id="{{ tender.external_id }}">
-          <header class="tender-entry-header">
-            <div class="tender-entry-heading">
-              <span class="tender-ref">Ref. {{ tender.external_id }}</span>
-              <h3 class="tender-title">{{ tender.title }}</h3>
-              {% if tender.category %}
-              <span class="tender-category">{{ tender.category }}</span>
-              {% endif %}
-            </div>
-            <div class="tender-entry-closing">
-              <span class="closing-label">Closing date</span>
-              <time class="closing-date {% if tender.days_until_close is not None and tender.days_until_close <= 7 %}closing-date--urgent{% endif %}" datetime="{{ tender.closing_date|date:'Y-m-d' }}">
-                {{ tender.closing_date|default:"To be confirmed" }}
-              </time>
+    <div class="table-scroller" id="table-scroller">
+      <table class="data-table" id="tender-table">
+        <thead>
+          <tr>
+            <th scope="col" class="col-no">No.</th>
+            <th scope="col" class="col-title">Title &amp; reference</th>
+            <th scope="col" class="col-authority">Issuing authority</th>
+            <th scope="col" class="col-province">Province</th>
+            <th scope="col" class="col-type">Type</th>
+            <th scope="col" class="col-source">Source</th>
+            <th scope="col" class="col-closing">Closing</th>
+            <th scope="col" class="col-action"><span class="visually-hidden">Link</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tender in tenders %}
+          <tr class="data-row {% if tender.days_until_close is not None and tender.days_until_close <= 7 %}is-urgent{% endif %}"
+              data-href="{{ tender.download_url }}"
+              tabindex="0">
+            <td class="col-no" data-label="No.">{{ page_obj.start_index|add:forloop.counter0 }}</td>
+            <td class="col-title" data-label="Title">
+              <span class="row-ref">{{ tender.external_id }}</span>
+              <span class="row-title">{{ tender.title }}</span>
+              {% if tender.category %}<span class="row-category">{{ tender.category }}</span>{% endif %}
+            </td>
+            <td class="col-authority" data-label="Authority">{{ tender.department|default:"—" }}</td>
+            <td class="col-province" data-label="Province">{{ tender.province|default:"—" }}</td>
+            <td class="col-type" data-label="Type">
+              <span class="tag">{{ tender.get_tender_type_display }}</span>
+            </td>
+            <td class="col-source" data-label="Source">{{ tender.source.name }}</td>
+            <td class="col-closing" data-label="Closing">
+              <span class="date {% if tender.days_until_close is not None and tender.days_until_close <= 7 %}date-urgent{% endif %}">
+                {{ tender.closing_date|default:"TBC" }}
+              </span>
               {% if tender.days_until_close is not None %}
-              <span class="days-remaining" data-days-left="{{ tender.days_until_close }}">
-                {% if tender.days_until_close == 0 %}Closes today
-                {% elif tender.days_until_close == 1 %}1 day remaining
-                {% elif tender.days_until_close > 0 %}{{ tender.days_until_close }} days remaining
+              <span class="days-badge" data-days="{{ tender.days_until_close }}">
+                {% if tender.days_until_close == 0 %}Today
+                {% elif tender.days_until_close == 1 %}1 day
+                {% elif tender.days_until_close > 0 %}{{ tender.days_until_close }} days
                 {% else %}Closed{% endif %}
               </span>
               {% endif %}
-            </div>
-          </header>
-
-          <dl class="tender-meta-grid">
-            <div class="meta-item">
-              <dt>Issuing authority</dt>
-              <dd>{{ tender.department|default:"Not specified" }}</dd>
-            </div>
-            <div class="meta-item">
-              <dt>Province</dt>
-              <dd>{{ tender.province|default:"Not specified" }}</dd>
-            </div>
-            <div class="meta-item">
-              <dt>Procurement type</dt>
-              <dd><span class="status-pill status-pill--type">{{ tender.get_tender_type_display }}</span></dd>
-            </div>
-            <div class="meta-item">
-              <dt>Source</dt>
-              <dd>{{ tender.source.name }}</dd>
-            </div>
-          </dl>
-
-          {% if tender.description %}
-          <div class="tender-description">
-            <p class="tender-excerpt" data-expandable>{{ tender.description }}</p>
-            <button type="button" class="btn-text expand-toggle" hidden aria-expanded="false">Show full description</button>
-          </div>
-          {% endif %}
-
-          <footer class="tender-entry-footer">
-            <a href="{{ tender.download_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-              View official publication
-            </a>
-          </footer>
-        </article>
-      </li>
-      {% endfor %}
-    </ol>
+            </td>
+            <td class="col-action" data-label="">
+              <a href="{{ tender.download_url }}" target="_blank" rel="noopener" class="row-link" tabindex="-1">Open</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
     {% if page_obj.has_other_pages %}
-    <nav class="pagination" aria-label="Register pagination">
-      <ul class="pagination-list">
-        {% if page_obj.has_previous %}
-        <li>
-          <a class="pagination-link" href="?page={{ page_obj.previous_page_number }}&amp;q={{ q }}&amp;province={{ province }}&amp;tender_type={{ tender_type }}&amp;source={{ source }}&amp;sort={{ sort }}">Previous</a>
-        </li>
-        {% endif %}
-        <li>
-          <span class="pagination-current" aria-current="page">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-        </li>
-        {% if page_obj.has_next %}
-        <li>
-          <a class="pagination-link" href="?page={{ page_obj.next_page_number }}&amp;q={{ q }}&amp;province={{ province }}&amp;tender_type={{ tender_type }}&amp;source={{ source }}&amp;sort={{ sort }}">Next</a>
-        </li>
-        {% endif %}
-      </ul>
+    <nav class="pager" aria-label="Pagination">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}&amp;q={{ q }}&amp;province={{ province }}&amp;tender_type={{ tender_type }}&amp;source={{ source }}&amp;sort={{ sort }}" class="pager-btn">Previous</a>
+      {% endif %}
+      <span class="pager-info">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}&amp;q={{ q }}&amp;province={{ province }}&amp;tender_type={{ tender_type }}&amp;source={{ source }}&amp;sort={{ sort }}" class="pager-btn">Next</a>
+      {% endif %}
     </nav>
     {% endif %}
 
     {% else %}
-    <div class="empty-state" role="status">
-      <h3>No records found</h3>
-      <p>No tenders match the selected search criteria. Adjust your filters or reset the register view.</p>
-      <p class="empty-state-note">
-        To load example data locally, run:
-        <code>python manage.py load_sample_tenders</code>
-      </p>
+    <div class="no-results">
+      <p>No tenders match your search.</p>
+      <p class="no-results-hint">Try different keywords or run <code>python manage.py load_sample_tenders</code></p>
     </div>
     {% endif %}
-  </section>
-</div>
+  </div>
+</section>
 {% endblock %}
