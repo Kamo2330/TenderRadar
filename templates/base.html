@@ -10,15 +10,17 @@
     {% block extra_head %}{% endblock %}
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to register</a>
+
     <div class="gov-banner" role="note">
-      <div class="gov-banner-inner">
+      <div class="layout-container gov-banner-inner">
         <span class="gov-banner-label">Public procurement register</span>
         <span class="gov-banner-text">Aggregated from published government and sector sources</span>
       </div>
     </div>
 
     <header class="site-header">
-      <div class="header-inner">
+      <div class="layout-container header-inner">
         <a href="{% url 'tenders:dashboard' %}" class="brand">
           <span class="brand-mark" aria-hidden="true">TR</span>
           <span class="brand-text">
@@ -31,7 +33,7 @@
           <span class="nav-toggle-bar"></span>
           <span class="nav-toggle-bar"></span>
         </button>
-        <nav class="site-nav" id="site-nav">
+        <nav class="site-nav" id="site-nav" aria-label="Primary">
           <a href="{% url 'tenders:dashboard' %}" class="nav-link nav-link--active">Tender Register</a>
           <a href="/admin/" class="nav-link">Administration</a>
         </nav>
@@ -45,7 +47,7 @@
     </main>
 
     <footer class="site-footer">
-      <div class="footer-inner">
+      <div class="layout-container footer-inner">
         <div class="footer-disclaimer">
           <h2 class="footer-heading">Disclaimer</h2>
           <p>
