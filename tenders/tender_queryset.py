@@ -15,7 +15,7 @@ def filter_tenders(
     date_filter: str = "open",
     sort: str = "newest",
 ):
-    """Shared tender list filtering used by Django views and REST API."""
+    """Shared tender list filtering for dashboard views."""
     today = timezone.localdate()
     tenders_qs = Tender.objects.select_related("source").all()
 

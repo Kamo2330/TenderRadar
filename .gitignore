@@ -50,15 +50,6 @@ static_collected/
 .DS_Store
 Thumbs.db
 
-# Node / Next.js
-frontend/node_modules/
-frontend/.next/
-frontend/out/
-frontend/.vercel/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
 # Testing
 .coverage
 htmlcov/

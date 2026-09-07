@@ -30,7 +30,6 @@ from .tender_queryset import filter_tenders
 User = get_user_model()
 
 
-@login_required
 def logout_view(request):
     if request.method in ("POST", "GET"):
         logout(request)
@@ -49,8 +48,7 @@ def health_check(request):
     return HttpResponse(
         "TENDERRADAR OK\n"
         f"Django {django.get_version()}\n"
-        "Public tender dashboard — NOT 2ndhand\n"
-        "Open: http://127.0.0.1:8000/\n",
+        "Open: http://127.0.0.1:8765/\n",
         content_type="text/plain",
     )
 
