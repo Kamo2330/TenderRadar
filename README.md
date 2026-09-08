@@ -36,7 +36,9 @@ python manage.py runserver
 
 On macOS or Linux, use `source .venv/bin/activate` and `cp .env.example .env`.
 
-Open http://127.0.0.1:8000/
+Open the URL printed by `runserver`. On many Windows PCs port 8000 is reserved, so it may be http://127.0.0.1:7000/ or http://127.0.0.1:9000/.
+
+No Docker is required. The site uses SQLite locally.
 
 If the page looks outdated, use Incognito or press Ctrl+Shift+R.
 
